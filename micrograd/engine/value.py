@@ -8,7 +8,7 @@ class Value:
         self.grad = 0.0
         self._backward = lambda: None
         self.label = label
-        self.children = set(children)
+        self._prev = set(children)
         self.op = op
 
     def __repr__(self):
@@ -120,7 +120,7 @@ class Value:
         def build_topological_order(node):
             if node not in visited:
                 visited.add(node)
-                for child in node.children:
+                for child in node._prev:
                     build_topological_order(child)
                 topological.append(node)
 

@@ -10,7 +10,7 @@ class TestValueCreation:
         v = Value(5.0)
         assert v.value == 5.0
         assert v.grad == 0.0
-        assert v.children == set()
+        assert v._prev == set()
         assert v.op == ""
         assert v.label == ""
 
@@ -19,7 +19,7 @@ class TestValueCreation:
         b = Value(2.0)
         c = Value(3.0, (a, b), "+", "c")
         assert c.value == 3.0
-        assert c.children == {a, b}
+        assert c._prev == {a, b}
         assert c.op == "+"
         assert c.label == "c"
 
@@ -34,7 +34,7 @@ class TestAddition:
         y = Value(3.0)
         result = x + y
         assert result.value == 5.0
-        assert result.children == {x, y}
+        assert result._prev == {x, y}
         assert result.op == "+"
 
     def test_add_int(self):
@@ -108,7 +108,7 @@ class TestMultiplication:
         y = Value(3.0)
         result = x * y
         assert result.value == 6.0
-        assert result.children == {x, y}
+        assert result._prev == {x, y}
         assert result.op == "*"
 
     def test_mul_int(self):
@@ -146,7 +146,7 @@ class TestDivision:
         v2 = Value(2.0)
         result = v1 / v2
         assert result.value == 3.0
-        assert result.children == {v1, v2}
+        assert result._prev == {v1, v2}
         assert result.op == "/"
 
     def test_div_int(self):
@@ -183,7 +183,7 @@ class TestPower:
         v = Value(2.0)
         result = v**3
         assert result.value == 8.0
-        assert result.children == {v}
+        assert result._prev == {v}
         assert result.op == "**3"
 
     def test_pow_float(self):
@@ -216,7 +216,7 @@ class TestMathFunctions:
         v = Value(1.0)
         result = v.exp()
         assert abs(result.value - math.e) < 1e-10
-        assert result.children == {v}
+        assert result._prev == {v}
         assert result.op == "exp"
 
     def test_exp_backward(self):
@@ -229,7 +229,7 @@ class TestMathFunctions:
         v = Value(0.0)
         result = v.tanh()
         assert abs(result.value - 0.0) < 1e-10
-        assert result.children == {v}
+        assert result._prev == {v}
         assert result.op == "tanh"
 
     def test_tanh_backward(self):
