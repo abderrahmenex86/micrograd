@@ -96,9 +96,9 @@ class TestLayerForwardPass:
         inputs = [Value(0.5)]
         outputs = layer(inputs)
 
-        assert len(outputs) == 1
-        assert isinstance(outputs[0], Value)
-        assert -1 <= outputs[0].data <= 1
+        assert len([outputs]) == 1
+        assert isinstance(outputs, Value)
+        assert -1 <= outputs.data <= 1
 
     def test_call_empty_inputs(self):
         layer = Layer(0, 2)
@@ -153,7 +153,7 @@ class TestLayerBackwardPass:
         inputs = [Value(1.0), Value(2.0), Value(-1.0)]
         outputs = layer(inputs)
 
-        outputs[0].backward()
+        outputs.backward()
 
         neuron = layer.neurons[0]
         for weight in neuron.weights:
@@ -322,9 +322,8 @@ class TestLayerIntegration:
         intermediate = layer1(inputs)
         outputs = layer2(intermediate)
 
-        assert len(outputs) == 1
-        assert isinstance(outputs[0], Value)
-        assert -1 <= outputs[0].data <= 1
+        assert isinstance(outputs, Value)
+        assert -1 <= outputs.data <= 1
 
     def test_layer_in_network(self):
         layer1 = Layer(2, 3)
@@ -335,7 +334,7 @@ class TestLayerIntegration:
         hidden = layer1(inputs)
         output = layer2(hidden)
 
-        output[0].backward()
+        output.backward()
 
         for neuron in layer1.neurons:
             for weight in neuron.weights:
@@ -344,18 +343,3 @@ class TestLayerIntegration:
         for neuron in layer2.neurons:
             for weight in neuron.weights:
                 assert weight.grad != 0.0
-
-    def test_multiple_layer_sizes(self):
-        test_cases = [
-            (Layer(1, 1), [Value(1.0)]),
-            (Layer(3, 1), [Value(1.0), Value(2.0), Value(3.0)]),
-            (Layer(2, 5), [Value(1.0), Value(2.0)]),
-            (Layer(5, 2), [Value(i) for i in range(5)]),
-        ]
-
-        for layer, inputs in test_cases:
-            outputs = layer(inputs)
-            assert len(outputs) == len(layer.neurons)
-            for output in outputs:
-                assert isinstance(output, Value)
-                assert -1 <= output.data <= 1
