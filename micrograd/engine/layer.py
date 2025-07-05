@@ -9,3 +9,6 @@ class Layer:
     def __call__(self, inputs):
         outs = [neuron(inputs) for neuron in self.neurons]
         return outs
+
+    def parameters(self):
+        return [param for neuron in self.neurons for param in neuron.parameters()]

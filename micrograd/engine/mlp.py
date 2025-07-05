@@ -17,3 +17,6 @@ class MLP:
         for layer in self.layers:
             inputs = layer(inputs)
         return inputs
+
+    def parameters(self):
+        return [params for layer in self.layers for params in layer.parameters()]

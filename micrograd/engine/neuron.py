@@ -12,7 +12,7 @@ class Neuron:
     def __call__(self, input):
         if len(input) != len(self.weights):
             raise ValueError(f"Expected {len(self.weights)} inputs, got {len(input)}")
-        
+
         activation = (
             sum(
                 weight_ith * input_ith
@@ -22,3 +22,6 @@ class Neuron:
         )
         out = activation.tanh()
         return out
+
+    def parameters(self):
+        return self.weights + [self.bias]
