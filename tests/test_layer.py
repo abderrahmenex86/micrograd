@@ -43,8 +43,8 @@ class TestLayerCreation:
 
         assert layer.neurons[0] is not layer.neurons[1]
 
-        weights1 = [w.value for w in layer.neurons[0].weights]
-        weights2 = [w.value for w in layer.neurons[1].weights]
+        weights1 = [w.data for w in layer.neurons[0].weights]
+        weights2 = [w.data for w in layer.neurons[1].weights]
         assert weights1 != weights2
 
 
@@ -53,9 +53,9 @@ class TestLayerForwardPass:
         layer = Layer(2, 3)
 
         for i, neuron in enumerate(layer.neurons):
-            neuron.weights[0].value = 0.5 * (i + 1)
-            neuron.weights[1].value = -0.3 * (i + 1)
-            neuron.bias.value = 0.1 * (i + 1)
+            neuron.weights[0].data = 0.5 * (i + 1)
+            neuron.weights[1].data = -0.3 * (i + 1)
+            neuron.bias.data = 0.1 * (i + 1)
 
         inputs = [Value(2.0), Value(1.0)]
         outputs = layer(inputs)
@@ -64,7 +64,7 @@ class TestLayerForwardPass:
         assert all(isinstance(output, Value) for output in outputs)
 
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_call_with_value_inputs(self):
         layer = Layer(3, 2)
@@ -75,7 +75,7 @@ class TestLayerForwardPass:
         assert len(outputs) == 2
         assert all(isinstance(output, Value) for output in outputs)
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_call_with_numeric_inputs(self):
         layer = Layer(2, 2)
@@ -86,19 +86,19 @@ class TestLayerForwardPass:
         assert len(outputs) == 2
         assert all(isinstance(output, Value) for output in outputs)
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_call_single_input_single_output(self):
         layer = Layer(1, 1)
-        layer.neurons[0].weights[0].value = 1.0
-        layer.neurons[0].bias.value = 0.0
+        layer.neurons[0].weights[0].data = 1.0
+        layer.neurons[0].bias.data = 0.0
 
         inputs = [Value(0.5)]
         outputs = layer(inputs)
 
         assert len(outputs) == 1
         assert isinstance(outputs[0], Value)
-        assert -1 <= outputs[0].value <= 1
+        assert -1 <= outputs[0].data <= 1
 
     def test_call_empty_inputs(self):
         layer = Layer(0, 2)
@@ -109,7 +109,7 @@ class TestLayerForwardPass:
         assert len(outputs) == 2
         assert all(isinstance(output, Value) for output in outputs)
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_call_large_layer(self):
         layer = Layer(10, 5)
@@ -120,7 +120,7 @@ class TestLayerForwardPass:
         assert len(outputs) == 5
         assert all(isinstance(output, Value) for output in outputs)
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
 
 class TestLayerBackwardPass:
@@ -129,9 +129,9 @@ class TestLayerBackwardPass:
 
         # Set known weights
         for neuron in layer.neurons:
-            neuron.weights[0].value = 0.5
-            neuron.weights[1].value = -0.3
-            neuron.bias.value = 0.1
+            neuron.weights[0].data = 0.5
+            neuron.weights[1].data = -0.3
+            neuron.bias.data = 0.1
 
         inputs = [Value(2.0), Value(1.0)]
         outputs = layer(inputs)
@@ -211,7 +211,7 @@ class TestLayerEdgeCases:
 
         assert len(outputs) == 2
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_large_inputs(self):
         layer = Layer(2, 2)
@@ -221,7 +221,7 @@ class TestLayerEdgeCases:
 
         assert len(outputs) == 2
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
     def test_small_inputs(self):
         layer = Layer(2, 2)
@@ -231,7 +231,7 @@ class TestLayerEdgeCases:
 
         assert len(outputs) == 2
         for output in outputs:
-            assert -1 <= output.value <= 1
+            assert -1 <= output.data <= 1
 
 
 class TestLayerParameters:
@@ -249,13 +249,13 @@ class TestLayerParameters:
     def test_parameter_modification(self):
         layer = Layer(2, 2)
 
-        layer.neurons[0].weights[0].value = 0.5
-        layer.neurons[0].weights[1].value = -0.5
-        layer.neurons[0].bias.value = 0.1
+        layer.neurons[0].weights[0].data = 0.5
+        layer.neurons[0].weights[1].data = -0.5
+        layer.neurons[0].bias.data = 0.1
 
-        assert layer.neurons[0].weights[0].value == 0.5
-        assert layer.neurons[0].weights[1].value == -0.5
-        assert layer.neurons[0].bias.value == 0.1
+        assert layer.neurons[0].weights[0].data == 0.5
+        assert layer.neurons[0].weights[1].data == -0.5
+        assert layer.neurons[0].bias.data == 0.1
 
     def test_all_parameters_are_values(self):
         layer = Layer(3, 2)
@@ -285,9 +285,9 @@ class TestLayerReproducibility:
         layer = Layer(2, 2)
 
         for i, neuron in enumerate(layer.neurons):
-            neuron.weights[0].value = 0.5 * (i + 1)
-            neuron.weights[1].value = -0.3 * (i + 1)
-            neuron.bias.value = 0.1 * (i + 1)
+            neuron.weights[0].data = 0.5 * (i + 1)
+            neuron.weights[1].data = -0.3 * (i + 1)
+            neuron.bias.data = 0.1 * (i + 1)
 
         inputs = [Value(1.0), Value(2.0)]
 
@@ -296,7 +296,7 @@ class TestLayerReproducibility:
 
         assert len(outputs1) == len(outputs2)
         for out1, out2 in zip(outputs1, outputs2):
-            assert out1.value == out2.value
+            assert out1.data == out2.data
 
     def test_different_random_initialization(self):
         random.seed(42)
@@ -306,10 +306,10 @@ class TestLayerReproducibility:
         layer2 = Layer(3, 2)
 
         for neuron1, neuron2 in zip(layer1.neurons, layer2.neurons):
-            weights1 = [w.value for w in neuron1.weights]
-            weights2 = [w.value for w in neuron2.weights]
+            weights1 = [w.data for w in neuron1.weights]
+            weights2 = [w.data for w in neuron2.weights]
             assert weights1 != weights2
-            assert neuron1.bias.value != neuron2.bias.value
+            assert neuron1.bias.data != neuron2.bias.data
 
 
 class TestLayerIntegration:
@@ -324,7 +324,7 @@ class TestLayerIntegration:
 
         assert len(outputs) == 1
         assert isinstance(outputs[0], Value)
-        assert -1 <= outputs[0].value <= 1
+        assert -1 <= outputs[0].data <= 1
 
     def test_layer_in_network(self):
         layer1 = Layer(2, 3)
@@ -358,4 +358,4 @@ class TestLayerIntegration:
             assert len(outputs) == len(layer.neurons)
             for output in outputs:
                 assert isinstance(output, Value)
-                assert -1 <= output.value <= 1
+                assert -1 <= output.data <= 1

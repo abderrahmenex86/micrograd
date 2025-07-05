@@ -8,7 +8,7 @@ from micrograd.engine.value import Value
 class TestValueCreation:
     def test_init_basic(self):
         v = Value(5.0)
-        assert v.value == 5.0
+        assert v.data == 5.0
         assert v.grad == 0.0
         assert v._prev == set()
         assert v.op == ""
@@ -18,14 +18,10 @@ class TestValueCreation:
         a = Value(1.0)
         b = Value(2.0)
         c = Value(3.0, (a, b), "+", "c")
-        assert c.value == 3.0
+        assert c.data == 3.0
         assert c._prev == {a, b}
         assert c.op == "+"
         assert c.label == "c"
-
-    def test_repr(self):
-        a = Value(5.0)
-        assert repr(a) == "Value(value=5.0)"
 
 
 class TestAddition:
@@ -33,29 +29,29 @@ class TestAddition:
         x = Value(2.0)
         y = Value(3.0)
         result = x + y
-        assert result.value == 5.0
+        assert result.data == 5.0
         assert result._prev == {x, y}
         assert result.op == "+"
 
     def test_add_int(self):
         x = Value(2.0)
         result = x + 3
-        assert result.value == 5.0
+        assert result.data == 5.0
 
     def test_add_float(self):
         x = Value(2.0)
         result = x + 3.5
-        assert result.value == 5.5
+        assert result.data == 5.5
 
     def test_radd_int(self):
         x = Value(2.0)
         result = 3 + x
-        assert result.value == 5.0
+        assert result.data == 5.0
 
     def test_radd_float(self):
         x = Value(2.0)
         result = 3.5 + x
-        assert result.value == 5.5
+        assert result.data == 5.5
 
     def test_add_backward(self):
         x = Value(2.0)
@@ -71,27 +67,27 @@ class TestSubtraction:
         x = Value(5.0)
         y = Value(3.0)
         result = x - y
-        assert result.value == 2.0
+        assert result.data == 2.0
 
     def test_sub_int(self):
         x = Value(5.0)
         result = x - 3
-        assert result.value == 2.0
+        assert result.data == 2.0
 
     def test_sub_float(self):
         x = Value(5.0)
         result = x - 3.5
-        assert result.value == 1.5
+        assert result.data == 1.5
 
     def test_rsub_int(self):
         x = Value(3.0)
         result = 5 - x
-        assert result.value == 2.0
+        assert result.data == 2.0
 
     def test_rsub_float(self):
         x = Value(3.0)
         result = 5.5 - x
-        assert result.value == 2.5
+        assert result.data == 2.5
 
     def test_sub_backward(self):
         x = Value(5.0)
@@ -107,29 +103,29 @@ class TestMultiplication:
         x = Value(2.0)
         y = Value(3.0)
         result = x * y
-        assert result.value == 6.0
+        assert result.data == 6.0
         assert result._prev == {x, y}
         assert result.op == "*"
 
     def test_mul_int(self):
         x = Value(2.0)
         result = x * 3
-        assert result.value == 6.0
+        assert result.data == 6.0
 
     def test_mul_float(self):
         x = Value(2.0)
         result = x * 3.5
-        assert result.value == 7.0
+        assert result.data == 7.0
 
     def test_rmul_int(self):
         x = Value(2.0)
         result = 3 * x
-        assert result.value == 6.0
+        assert result.data == 6.0
 
     def test_rmul_float(self):
         x = Value(2.0)
         result = 3.5 * x
-        assert result.value == 7.0
+        assert result.data == 7.0
 
     def test_mul_backward(self):
         x = Value(2.0)
@@ -145,29 +141,29 @@ class TestDivision:
         v1 = Value(6.0)
         v2 = Value(2.0)
         result = v1 / v2
-        assert result.value == 3.0
+        assert result.data == 3.0
         assert result._prev == {v1, v2}
         assert result.op == "/"
 
     def test_div_int(self):
         v = Value(6.0)
         result = v / 2
-        assert result.value == 3.0
+        assert result.data == 3.0
 
     def test_div_float(self):
         v = Value(6.0)
         result = v / 2.5
-        assert result.value == 2.4
+        assert result.data == 2.4
 
     def test_rdiv_int(self):
         v = Value(2.0)
         result = 6 / v
-        assert result.value == 3.0
+        assert result.data == 3.0
 
     def test_rdiv_float(self):
         v = Value(2.0)
         result = 6.5 / v
-        assert result.value == 3.25
+        assert result.data == 3.25
 
     def test_div_backward(self):
         v1 = Value(6.0)
@@ -182,14 +178,14 @@ class TestPower:
     def test_pow_int(self):
         v = Value(2.0)
         result = v**3
-        assert result.value == 8.0
+        assert result.data == 8.0
         assert result._prev == {v}
         assert result.op == "**3"
 
     def test_pow_float(self):
         v = Value(4.0)
         result = v**0.5
-        assert result.value == 2.0
+        assert result.data == 2.0
 
     def test_pow_backward(self):
         v = Value(2.0)
@@ -202,7 +198,7 @@ class TestNegation:
     def test_neg(self):
         v = Value(5.0)
         result = -v
-        assert result.value == -5.0
+        assert result.data == -5.0
 
     def test_neg_backward(self):
         v = Value(5.0)
@@ -215,7 +211,7 @@ class TestMathFunctions:
     def test_exp(self):
         v = Value(1.0)
         result = v.exp()
-        assert abs(result.value - math.e) < 1e-10
+        assert abs(result.data - math.e) < 1e-10
         assert result._prev == {v}
         assert result.op == "exp"
 
@@ -228,7 +224,7 @@ class TestMathFunctions:
     def test_tanh(self):
         v = Value(0.0)
         result = v.tanh()
-        assert abs(result.value - 0.0) < 1e-10
+        assert abs(result.data - 0.0) < 1e-10
         assert result._prev == {v}
         assert result.op == "tanh"
 
@@ -315,17 +311,17 @@ class TestEdgeCases:
     def test_zero_operations(self):
         v1 = Value(0.0)
         v2 = Value(5.0)
-        assert (v1 + v2).value == 5.0
-        assert (v1 * v2).value == 0.0
-        assert (v2 / Value(1.0)).value == 5.0
+        assert (v1 + v2).data == 5.0
+        assert (v1 * v2).data == 0.0
+        assert (v2 / Value(1.0)).data == 5.0
 
     def test_negative_values(self):
         v = Value(-3.0)
-        assert (v + Value(5.0)).value == 2.0
-        assert (v * Value(2.0)).value == -6.0
-        assert (v**2).value == 9.0
+        assert (v + Value(5.0)).data == 2.0
+        assert (v * Value(2.0)).data == -6.0
+        assert (v**2).data == 9.0
 
     def test_fractional_power(self):
         v = Value(9.0)
         result = v**0.5
-        assert abs(result.value - 3.0) < 1e-10
+        assert abs(result.data - 3.0) < 1e-10

@@ -4,7 +4,7 @@ import math
 class Value:
 
     def __init__(self, value, children=(), op="", label=""):
-        self.value = value
+        self.data = value
         self.grad = 0.0
         self._backward = lambda: None
         self.label = label
@@ -12,14 +12,14 @@ class Value:
         self.op = op
 
     def __repr__(self):
-        return f"Value(value={self.value})"
+        return f"Value(data={self.label}, value={self.data}, grad={self.grad})"
 
     def __add__(self, other):
         assert isinstance(
             other, (Value, int, float)
         ), "Can only add Value or numeric types"
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.value + other.value, (self, other), "+")
+        out = Value(self.data + other.data, (self, other), "+")
 
         def _backward():
             self.grad += 1.0 * out.grad
@@ -51,11 +51,11 @@ class Value:
             other, (Value, int, float)
         ), "Can only multiply Value or numeric types"
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.value * other.value, (self, other), "*")
+        out = Value(self.data * other.data, (self, other), "*")
 
         def _backward():
-            self.grad += other.value * out.grad
-            other.grad += self.value * out.grad
+            self.grad += other.data * out.grad
+            other.grad += self.data * out.grad
 
         out._backward = _backward
         return out
@@ -69,11 +69,11 @@ class Value:
             other, (Value, int, float)
         ), "Can only divide by Value or numeric types"
         other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.value / other.value, (self, other), "/")
+        out = Value(self.data / other.data, (self, other), "/")
 
         def _backward():
-            self.grad += (1 / other.value) * out.grad
-            other.grad -= (self.value / (other.value**2)) * out.grad
+            self.grad += (1 / other.data) * out.grad
+            other.grad -= (self.data / (other.data**2)) * out.grad
 
         out._backward = _backward
         return out
@@ -84,26 +84,26 @@ class Value:
 
     def __pow__(self, exponent):
         assert isinstance(exponent, (int, float)), "Only supports int/float powers"
-        out = Value(self.value**exponent, (self,), f"**{exponent}")
+        out = Value(self.data**exponent, (self,), f"**{exponent}")
 
         def _backward():
-            self.grad += (exponent * self.value ** (exponent - 1)) * out.grad
+            self.grad += (exponent * self.data ** (exponent - 1)) * out.grad
 
         out._backward = _backward
         return out
 
     def exp(self):
-        x = self.value
+        x = self.data
         out = Value(math.exp(x), (self,), "exp")
 
         def _backward():
-            self.grad += out.value * out.grad
+            self.grad += out.data * out.grad
 
         out._backward = _backward
         return out
 
     def tanh(self):
-        x = self.value
+        x = self.data
         t = (math.exp(x) - math.exp(-x)) / (math.exp(x) + math.exp(-x))
         out = Value(t, (self,), "tanh")
 
