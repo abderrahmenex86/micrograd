@@ -9,7 +9,7 @@ class MLP:
         ), "n_inputs must be a positive integer"
         assert (
             isinstance(n_outputs, list) and len(n_outputs) > 0
-        ), "n_outputs must be a positive integer"
+        ), "n_outputs must be a non-empty list of integers"
         sizes = [n_inputs] + n_outputs
         self.layers = [Layer(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 1)]
 
@@ -20,3 +20,7 @@ class MLP:
 
     def parameters(self):
         return [params for layer in self.layers for params in layer.parameters()]
+
+    def zero_grad(self):
+        for p in self.parameters():
+            p.grad = 0.0

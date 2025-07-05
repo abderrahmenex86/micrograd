@@ -25,3 +25,7 @@ class Neuron:
 
     def parameters(self):
         return self.weights + [self.bias]
+
+    def zero_grad(self):
+        for p in self.parameters():
+            p.grad = 0.0

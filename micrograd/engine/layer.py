@@ -12,3 +12,7 @@ class Layer:
 
     def parameters(self):
         return [param for neuron in self.neurons for param in neuron.parameters()]
+
+    def zero_grad(self):
+        for p in self.parameters():
+            p.grad = 0.0
