@@ -47,7 +47,9 @@ class Value:
         return other + (-self)
 
     def __mul__(self, other):
-        assert isinstance(other, (Value)), "Can only multiply Value or numeric types"
+        assert isinstance(
+            other, (Value, int, float)
+        ), "Can only multiply Value or numeric types"
         other = other if isinstance(other, Value) else Value(other)
         out = Value(self.value * other.value, (self, other), "*")
 
@@ -63,7 +65,9 @@ class Value:
         return self * Value(other)
 
     def __truediv__(self, other):
-        assert isinstance(other, (Value)), "Can only divide by Value or numeric types"
+        assert isinstance(
+            other, (Value, int, float)
+        ), "Can only divide by Value or numeric types"
         other = other if isinstance(other, Value) else Value(other)
         out = Value(self.value / other.value, (self, other), "/")
 
