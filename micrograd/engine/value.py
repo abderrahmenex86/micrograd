@@ -12,7 +12,7 @@ class Value:
         self.op = op
 
     def __repr__(self):
-        return f"Value(data={self.label}, value={self.data}, grad={self.grad})"
+        return f"Value(data={self.data}, label={self.label}, grad={self.grad})"
 
     def __add__(self, other):
         assert isinstance(

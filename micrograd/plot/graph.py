@@ -7,7 +7,7 @@ def create_graph(root):
     def build(node):
         if node not in nodes:
             nodes.add(node)
-            for child in node.children:
+            for child in node._prev:
                 edges.add((child, node))
                 build(child)
 
@@ -24,7 +24,7 @@ def draw_graph(root):
 
         dot.node(
             name=uid,
-            label=f"{node.label}|{node.value:.4f}|{node.grad:.4f}",
+            label=f"{node.label}|{node.data:.4f}|{node.grad:.4f}",
             shape="record",
         )
 
