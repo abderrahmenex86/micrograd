@@ -1,7 +1,7 @@
 from micrograd.engine.layer import Layer
 
 
-class mlp:
+class MLP:
 
     def __init__(self, n_inputs, n_outputs):
         assert (
